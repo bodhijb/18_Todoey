@@ -11,30 +11,16 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     var itemArray: [Item] = [Item]()
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
 
-    
-    let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        let newItem = Item()
-        newItem.title = "Find Mike"
-        itemArray.append(newItem)
-        
-        let newItem2 = Item()
-        newItem2.title = "Buy Eggs"
-        itemArray.append(newItem2)
-        
-        let newItem3 = Item()
-        newItem3.title = "Destroy Demogorgon"
-        itemArray.append(newItem3)
+        print(dataFilePath!)
 
-        
-        if let itemArr = defaults.array(forKey: "TodoListArray") as? [Item] {
-            itemArray = itemArr
-        }
+        loadItems()
         
     }
     
@@ -68,7 +54,7 @@ class TodoListViewController: UITableViewController {
         // set done value
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
 
-        tableView.reloadData()
+        saveItems()
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -90,10 +76,7 @@ class TodoListViewController: UITableViewController {
             newItem.title = textField.text!
             self.itemArray.append(newItem)
             
-            // add array to UD
-            self.defaults.set(self.itemArray, forKey: "TodoListArray")
-            
-            self.tableView.reloadData()
+            self.saveItems()
             
         }
         
@@ -104,6 +87,40 @@ class TodoListViewController: UITableViewController {
         
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
+        
+    }
+    
+    
+    // MARK - Data Manipulation Methods
+    
+    func saveItems() {
+        // create an encoder to break down the array into a storable form
+        let encoder = PropertyListEncoder()
+        
+        do {
+            // the encoded array
+            let data = try encoder.encode(itemArray)
+            //write the data to the dataFP
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("Error encoding the item array \(error)")
+        }
+        
+        tableView.reloadData()
+    }
+    
+    func loadItems() {
+    // if you get anything back from the file path, use a decoder to assign contents to itemArr
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            
+            do{
+                itemArray = try decoder.decode([Item].self, from: data)
+                
+            } catch {
+            print("Error retreiving data \(error)")
+            }
+        }
         
     }
     
