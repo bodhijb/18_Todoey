@@ -14,6 +14,7 @@ class CategoryTableViewController: UITableViewController {
     
     var categories: [Category] = [Category]()
     
+    
     // set up a context space
     // refresh explanation
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -24,9 +25,6 @@ class CategoryTableViewController: UITableViewController {
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         loadCategories()
-        
-        
-
     }
     
     
@@ -113,6 +111,7 @@ class CategoryTableViewController: UITableViewController {
     
     // when they select the row, leads to all items under that category
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // performSegue calls prepare for segue() bfore running
         performSegue(withIdentifier: "goToItems", sender: self)
         
 
@@ -127,21 +126,7 @@ class CategoryTableViewController: UITableViewController {
         if let indexPath = tableView.indexPathForSelectedRow {
             destinationVC.selectedCategory = categories[indexPath.row]
         }
-        
-        
-
-        
-        
     }
-    
-    
-    
-
-    
-    
-    
-    
-    
     
 }
 

@@ -78,7 +78,6 @@ class TodoListViewController: UITableViewController {
         let action: UIAlertAction = UIAlertAction(title: "Add Item", style: .default) {
             (action) in
             // what will happen once user clicks "Add Item" btn on UIAlert
-            
             let newItem = Item(context: self.context)
             newItem.title = textField.text!
             newItem.done = false
@@ -87,6 +86,7 @@ class TodoListViewController: UITableViewController {
             self.saveItems()
             
         }
+        
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create new item"
             textField = alertTextField
@@ -146,7 +146,7 @@ extension TodoListViewController: UISearchBarDelegate {
         let request: NSFetchRequest<Item> = Item.fetchRequest()
         
         // for all items, return ones where title contains searchBar text
-         let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+         let predicate = NSPredicate(format: "done EQUALS[cd] %@", searchBar.text!)
         
         // create sort descriptor & append to the request
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
